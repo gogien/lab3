@@ -124,15 +124,18 @@ class BirdPillarApp:
     def on_canvas_click(self, event):
         """Handle pillar placement or editing."""
         x, y = event.x, event.y
+        
+        # Проверка на пересечение с другими столбами
         for pillar in self.pillars:
-            if pillar.contains(x, y):
-                pillar.max_birds = self.pillar_durability_slider.get()
+            if abs(pillar.x - x) < 50 and abs(pillar.y - y) < 50:  # Минимальное расстояние в 50 пикселей
+                print("Too close to an existing pillar. Cannot create a new one.")
                 return
 
-        # Create a new pillar if none found nearby
+        # Если столб не найден рядом, создаём новый
         new_pillar = Pillar(self.canvas, self.pillar_durability_slider.get(), base_settings['PILLAR_SPAWN_INTERVAL'], x, y, 20, 10)
         self.pillars.append(new_pillar)
         new_pillar.draw()
+        print(f"Added new pillar at ({x}, {y}) with durability {new_pillar.max_birds}")
 
     def initialize_pillars(self):
         """Initialize default pillars."""
